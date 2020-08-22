@@ -1,4 +1,8 @@
-import { RESTDataSource, RequestOptions } from "apollo-datasource-rest";
+import {
+  RESTDataSource,
+  RequestOptions,
+  HTTPCache,
+} from "apollo-datasource-rest";
 import { cond, match, equals, always, SafePred } from "ramda";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
@@ -29,16 +33,25 @@ export type User = {
   karma: number;
   about: string;
   submitted: number[];
+  avatarUrl?: string;
 };
 
-const cacheTTL = 5 * 60;
+const REQUEST_CACHE_TTL = 5 * 60;
+if (!process.env.HACKERNEWS_API_BASE_URL) {
+  throw new Error("No HN API defined");
+}
 
 export class HackerNewsAPI extends RESTDataSource {
-  baseURL = "https://hacker-news.firebaseio.com/v0/";
+  baseURL = process.env.HACKERNEWS_API_BASE_URL;
+  httpCache = new HTTPCache();
+
+  constructor() {
+    super();
+  }
 
   willSendRequest(request: RequestOptions) {
     request.cacheOptions = {
-      ttl: cacheTTL,
+      ttl: REQUEST_CACHE_TTL,
     };
   }
 
@@ -50,12 +63,27 @@ export class HackerNewsAPI extends RESTDataSource {
     return this.get<User>(`user/${username}.json`);
   }
 
+  async getUsers(
+    usernameList: string[],
+    offset: number = 0,
+    limit: number = 10
+  ): Promise<User[]> {
+    const users = usernameList
+      .slice(offset, limit)
+      .map((username) => this.getUser(username));
+    return Promise.all(users);
+  }
+
   async maxItem(): Promise<number> {
     return this.get<number>(`maxitem.json`);
   }
 
   async getTopStories(): Promise<number[]> {
     return this.get<number[]>(`topstories.json`);
+  }
+
+  async getUpdates(): Promise<{ items: number[]; profiles: [] }> {
+    return this.get("updates.json");
   }
 
   async getNewStories(): Promise<number[]> {
