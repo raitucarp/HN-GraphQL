@@ -1,0 +1,29 @@
+{
+  "name": "hn-graphql",
+  "version": "0.1.0",
+  "description": "GraphQL version of HN API",
+  "main": "dist/app.js",
+  "repository": "https://github.com/raitucarp/HN-GraphQL.git",
+  "author": "Ribhararnus Pracutiar <ribhararnus.pracutiar@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "ts-node ./src/app.ts",
+    "build": "tsc",
+    "start": "node ./dist/app.js"
+  },
+  "dependencies": {
+    "apollo-datasource-rest": "^0.9.3",
+    "apollo-server": "^2.16.1",
+    "apollo-server-cache-redis": "^1.2.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.3.0",
+    "ramda": "^0.27.1"
+  },
+  "devDependencies": {
+    "@types/ramda": "^0.27.14",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  }
+}
