@@ -110,6 +110,7 @@ const typeDefs = gql`
     ask_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
     show_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
     job_stories(offset: Int! = 0, limit: Int! = 5): [Job!]!
+    item(itemId: Int!): Story
   type Subscription {
     itemsUpdated: [UserStory]
     profilesUpdated: [User]
