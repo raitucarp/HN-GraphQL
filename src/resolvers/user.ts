@@ -1,11 +1,10 @@
-export const submittedItemsResolver = async (
-  user: any,
+import { User } from "../data-sources/hackernews";
+
+export const userStoriesResolver = async (
+  user: User,
   { offset, limit }: any,
   { dataSources }: any
 ) => {
-  if (user.submitted <= 0) return [];
-  const submittedItems = user.submitted
-    .slice(offset, limit)
-    .map((id: number) => dataSources.hackerNewsAPI.getItem(id));
-  return submittedItems;
+  if (user.submitted) return [];
+  return dataSources.hackerNewsAPI.getItemByIds(user.submitted, offset, limit);
 };

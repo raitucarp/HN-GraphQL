@@ -1,13 +1,42 @@
 import { storyResolver } from "./stories";
-import { byUserResolver, commentsResolver } from "./item";
-import { submittedItemsResolver } from "./user";
+import { userInfoResolver, commentsResolver } from "./item";
+import { userStoriesResolver } from "./user";
+import { Item } from "data-sources/hackernews";
+import { commentRepliesResolver, commentReplyOfResolver } from './comment';
 
 const resolvers = {
-  User: {
-    submitted_items: submittedItemsResolver,
-  },
   Item: {
-    byUser: byUserResolver,
+    __resolveType() {
+      return null;
+    },
+  },
+  Stories: {
+    __resolveType(item: Item) {
+      if (item.url) return "Story";
+      if (item.descendants) return "Poll";
+      if (item.text) return "Comment";
+
+      return "Job";
+    },
+  },
+  UserStory: {
+    __resolveType(item: Item) {
+      if (item.url) return "Story";
+      if (item.parts) return "Poll";
+      if (item.text) return "Comment";
+      if (item.parent && item.score) return "PollOption";
+      return "Job";
+    },
+  },
+  Comment: {
+    replies: commentRepliesResolver,
+    reply_of: commentReplyOfResolver,
+  },
+  User: {
+    stories: userStoriesResolver,
+  },
+  Story: {
+    user_info: userInfoResolver,
     comments: commentsResolver,
   },
 

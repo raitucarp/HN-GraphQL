@@ -1,5 +1,7 @@
-export const byUserResolver = async (
-  item: any,
+import { Item } from "../data-sources/hackernews";
+
+export const userInfoResolver = async (
+  item: Item,
   _args: any,
   { dataSources }: any
 ) => {
@@ -9,14 +11,10 @@ export const byUserResolver = async (
 };
 
 export const commentsResolver = async (
-  item: any,
+  item: Item,
   { offset, limit }: any,
   { dataSources }: any
 ) => {
   if (!item.kids) return [];
-
-  const comments = item.kids
-    .slice(offset, limit)
-    .map((id: number) => dataSources.hackerNewsAPI.getItem(id));
-  return comments;
+  return dataSources.hackerNewsAPI.getItemByIds(item.kids, offset, limit);
 };
