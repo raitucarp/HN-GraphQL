@@ -97,7 +97,7 @@ const typeDefs = gql`
     id: String!
     delay: Int
     created: Int!
-    karma: Int!
+    karma: Int
     about: String
     submitted: [Int]
     avatarUrl: String
