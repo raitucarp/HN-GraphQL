@@ -90,7 +90,6 @@ const typeDefs = gql`
     score: Int
   }
 
-  union Stories = Story | Job | Poll
   union UserStory = Story | Job | Poll | Comment | PollOption
 
   type User {
