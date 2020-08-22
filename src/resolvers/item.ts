@@ -18,3 +18,9 @@ export const commentsResolver = async (
   if (!item.kids) return [];
   return dataSources.hackerNewsAPI.getItemByIds(item.kids, offset, limit);
 };
+
+export const itemResolver = async (
+  root: any,
+  { itemId }: any,
+  { dataSources }: any
+) => dataSources.hackerNewsAPI.getItem(itemId);
