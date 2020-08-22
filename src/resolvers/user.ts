@@ -5,6 +5,6 @@ export const userStoriesResolver = async (
   { offset, limit }: any,
   { dataSources }: any
 ) => {
-  if (user.submitted) return [];
+  if (!user.submitted) return [];
   return dataSources.hackerNewsAPI.getItemByIds(user.submitted, offset, limit);
 };
