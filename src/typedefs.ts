@@ -60,7 +60,7 @@ const typeDefs = gql`
     parent: Int
     text: String
     reply_of: UserStory
-    replies(offset: Int!, limit: Int!): [UserStory]
+    replies(offset: Int = 0, limit: Int = 5): [UserStory]
   }
 
   type Poll implements Item {
@@ -101,16 +101,16 @@ const typeDefs = gql`
     about: String
     submitted: [Int]
     avatarUrl: String
-    stories(offset: Int!, limit: Int!): [UserStory]
+    stories(offset: Int = 0, limit: Int = 5): [UserStory]
   }
 
   type Query {
-    top_stories(offset: Int!, limit: Int!): [Stories!]!
-    new_stories(offset: Int!, limit: Int!): [Stories!]!
-    best_stories(offset: Int!, limit: Int!): [Stories!]!
-    ask_stories(offset: Int!, limit: Int!): [Story!]!
-    show_stories(offset: Int!, limit: Int!): [Story!]!
-    job_stories(offset: Int!, limit: Int!): [Job!]!
+    top_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
+    new_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
+    best_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
+    ask_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
+    show_stories(offset: Int! = 0, limit: Int! = 5): [UserStory!]!
+    job_stories(offset: Int! = 0, limit: Int! = 5): [Job!]!
   }
 `;
 
