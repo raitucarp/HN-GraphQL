@@ -15,12 +15,12 @@ export const server = new ApolloServer({
       hackerNewsAPI: new HackerNewsAPI(),
     };
   },
-  subscriptions: {
-    onConnect: async (connectionParams, _webSocket) => {
-      console.log("xxx");
-      console.log(connectionParams);
-    },
-  },
+  // subscriptions: {
+  //   onConnect: async (connectionParams, _webSocket) => {
+  //     console.log("xxx");
+  //     console.log(connectionParams);
+  //   },
+  // },
 });
 
 server.applyMiddleware({ app });
