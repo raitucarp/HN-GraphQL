@@ -17,12 +17,6 @@ export const server = new ApolloServer({
       urlMetaAPI: new URLMetaAPI(),
     };
   },
-  // subscriptions: {
-  //   onConnect: async (connectionParams, _webSocket) => {
-  //     console.log("xxx");
-  //     console.log(connectionParams);
-  //   },
-  // },
 });
 
 server.applyMiddleware({ app });
