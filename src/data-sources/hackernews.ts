@@ -3,7 +3,8 @@ import {
   RequestOptions,
   HTTPCache,
 } from "apollo-datasource-rest";
-import { cond, match, equals, always, SafePred } from "ramda";
+import { cond, equals, always } from "ramda";
+import * as turndown from "turndown";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
 export type StoriesType = "top" | "new" | "best" | "ask" | "show" | "job";
@@ -56,11 +57,19 @@ export class HackerNewsAPI extends RESTDataSource {
   }
 
   async getItem(id: number): Promise<Item> {
-    return this.get<Item>(`item/${id}.json`);
+    const item = await this.get<Item>(`item/${id}.json`);
+    let text = "";
+    const { text: text_ } = item;
+    if (text_) text = this.turndownService.turndown(text_);
+    return { ...item, text };
   }
 
   async getUser(username: string): Promise<User> {
-    return this.get<User>(`user/${username}.json`);
+    const user = await this.get<User>(`user/${username}.json`);
+    let about = "";
+    const { about: about_ } = user;
+    if (about_) about = this.turndownService.turndown(about_);
+    return { ...user, about };
   }
 
   async getUsers(
