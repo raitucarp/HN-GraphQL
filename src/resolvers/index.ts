@@ -1,7 +1,7 @@
 import { PubSub } from "apollo-server";
 import { storyResolver } from "./stories";
-import { userInfoResolver, commentsResolver, itemResolver } from "./item";
-import { userStoriesResolver, userResolver } from "./user";
+import { commentsResolver, itemResolver, urlMetaResolver } from "./item";
+import { userStoriesResolver, userResolver, userInfoResolver } from "./user";
 import { Item, HackerNewsAPI } from "../data-sources/hackernews";
 import { commentRepliesResolver, commentReplyOfResolver } from "./comment";
 
@@ -26,6 +26,7 @@ const resolvers = {
     },
   },
   Comment: {
+    user_info: userInfoResolver,
     replies: commentRepliesResolver,
     reply_of: commentReplyOfResolver,
   },
@@ -33,6 +34,7 @@ const resolvers = {
     stories: userStoriesResolver,
   },
   Story: {
+    url_meta: urlMetaResolver,
     user_info: userInfoResolver,
     comments: commentsResolver,
   },

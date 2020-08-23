@@ -5,7 +5,7 @@ export const commentRepliesResolver = async (
   { offset = 0, limit = 5 }: any,
   { dataSources }: any
 ) => {
-  if (comment.kids) return [];
+  if (!comment.kids) return [];
   return dataSources.hackerNewsAPI.getItemByIds(comment.kids, offset, limit);
 };
 

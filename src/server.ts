@@ -4,6 +4,7 @@ import resolvers from "./resolvers";
 import typeDefs from "./typedefs";
 import * as http from "http";
 import * as express from "express";
+import { URLMetaAPI } from "./data-sources/urlmeta";
 
 const app = express();
 
@@ -13,14 +14,9 @@ export const server = new ApolloServer({
   dataSources: () => {
     return {
       hackerNewsAPI: new HackerNewsAPI(),
+      urlMetaAPI: new URLMetaAPI(),
     };
   },
-  // subscriptions: {
-  //   onConnect: async (connectionParams, _webSocket) => {
-  //     console.log("xxx");
-  //     console.log(connectionParams);
-  //   },
-  // },
 });
 
 server.applyMiddleware({ app });

@@ -1,4 +1,18 @@
-import { User } from "../data-sources/hackernews";
+import { User, Item } from "../data-sources/hackernews";
+
+export const userInfoResolver = async (
+  item: Item,
+  _args: any,
+  { dataSources }: any
+) => {
+  const username = item.by;
+  if (!username) return {};
+  const user = await dataSources.hackerNewsAPI.getUser(username);
+  return {
+    ...user,
+    avatarUrl: `${process.env.AVATAR_BASE_URL}${username}.png`,
+  };
+};
 
 export const userStoriesResolver = async (
   user: User,
@@ -17,6 +31,6 @@ export const userResolver = async (
   const userData = dataSources.hackerNewsAPI.getUser(username);
   return {
     ...userData,
-    avatarUrl: `${process.env.AVATAR_BASE_URL}${username}`,
+    avatarUrl: `${process.env.AVATAR_BASE_URL}${username}.png`,
   };
 };
