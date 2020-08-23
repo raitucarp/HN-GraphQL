@@ -37,10 +37,11 @@ export class URLMetaAPI extends RESTDataSource {
       `${this.emailAddress}:${this.apiKey}`
     ).toString("base64");
 
+    request.headers.set("Authorization", `Basic ${basicAuthBase64}`);
+    request.cache = "force-cache";
     request.cacheOptions = {
       ttl: REQUEST_CACHE_TTL,
     };
-    request.headers.set("Authorization", `Basic ${basicAuthBase64}`);
   }
 
   async getMetaFromURL(url: string): Promise<URLMeta> {

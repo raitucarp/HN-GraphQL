@@ -1,5 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import { HackerNewsAPI } from "./data-sources/hackernews";
+import { RedisCache } from "apollo-server-cache-redis";
 import resolvers from "./resolvers";
 import typeDefs from "./typedefs";
 import * as http from "http";
@@ -7,15 +8,27 @@ import * as express from "express";
 import { URLMetaAPI } from "./data-sources/urlmeta";
 
 const app = express();
+const multiDataSources = {
+  hackerNewsAPI: new HackerNewsAPI(),
+  urlMetaAPI: new URLMetaAPI(),
+};
 
 export const server = new ApolloServer({
   typeDefs,
   resolvers,
-  dataSources: () => {
-    return {
-      hackerNewsAPI: new HackerNewsAPI(),
-      urlMetaAPI: new URLMetaAPI(),
-    };
+  tracing: true,
+  cache: new RedisCache(process.env.REDIS_CONNECTION_STRING),
+  cacheControl: {
+    defaultMaxAge: 300,
+  },
+  dataSources: () => multiDataSources,
+  context: ({ req, connection }) => {
+    if (connection) {
+      return {
+        dataSources: multiDataSources,
+      };
+    }
+    return {};
   },
 });
 

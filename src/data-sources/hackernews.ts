@@ -124,7 +124,7 @@ export class HackerNewsAPI extends RESTDataSource {
     offset: number,
     limit: number
   ): Promise<Item[]> {
-    const stories = ids.slice(offset, limit).map((id) => this.getItem(id));
+    const stories = ids.slice(offset, limit).map((id) => this.get(`item/${id}.json`));
     return Promise.all(stories);
   }
 
