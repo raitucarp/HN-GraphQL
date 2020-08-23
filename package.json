@@ -1,6 +1,6 @@
 {
   "name": "hn-graphql",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "GraphQL version of HN API",
   "main": "dist/app.js",
   "repository": "https://github.com/raitucarp/HN-GraphQL.git",
