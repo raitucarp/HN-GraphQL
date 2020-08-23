@@ -13,6 +13,7 @@ export const server = new ApolloServer({
   dataSources: () => {
     return {
       hackerNewsAPI: new HackerNewsAPI(),
+      urlMetaAPI: new URLMetaAPI(),
     };
   },
   // subscriptions: {

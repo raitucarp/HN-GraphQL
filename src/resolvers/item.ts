@@ -24,3 +24,12 @@ export const itemResolver = async (
   { itemId }: any,
   { dataSources }: any
 ) => dataSources.hackerNewsAPI.getItem(itemId);
+
+export const urlMetaResolver = async (
+  item: Item,
+  args: any,
+  { dataSources }: any
+) => {
+  if (!item.url) return {};
+  return dataSources.urlMetaAPI.getMetaFromURL(item.url);
+};

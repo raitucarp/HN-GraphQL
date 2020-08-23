@@ -33,6 +33,7 @@ const resolvers = {
     stories: userStoriesResolver,
   },
   Story: {
+    url_meta: urlMetaResolver,
     user_info: userInfoResolver,
     comments: commentsResolver,
   },
