@@ -45,6 +45,7 @@ if (!process.env.HACKERNEWS_API_BASE_URL) {
 export class HackerNewsAPI extends RESTDataSource {
   baseURL = process.env.HACKERNEWS_API_BASE_URL;
   httpCache = new HTTPCache();
+  turndownService = new turndown();
 
   constructor() {
     super();
