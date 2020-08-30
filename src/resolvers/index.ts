@@ -1,3 +1,4 @@
+import "apollo-cache-control";
 import { PubSub } from "apollo-server";
 import { storyResolver } from "./stories";
 import { commentsResolver, itemResolver, urlMetaResolver } from "./item";
