@@ -38,10 +38,6 @@ export type User = {
   avatarUrl?: string;
 };
 
-const REQUEST_CACHE_TTL: number = parseInt(
-  process.env.REQUEST_CACHE_TTL ?? (5 * 60).toString()
-);
-
 if (!process.env.HACKERNEWS_API_BASE_URL) {
   throw new Error("No HN API defined");
 }
@@ -50,10 +46,6 @@ export class HackerNewsAPI extends RESTDataSource {
   baseURL = process.env.HACKERNEWS_API_BASE_URL;
   httpCache = new HTTPCache();
   turndownService = new turndown();
-
-  constructor() {
-    super();
-  }
 
   willSendRequest(request: RequestOptions) {
     request.cacheOptions = {
