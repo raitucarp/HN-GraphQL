@@ -71,6 +71,8 @@ export class HackerNewsAPI extends RESTDataSource {
 
   async getUser(username: string): Promise<User> {
     const user = await this.get<User>(`user/${username}.json`);
+    if (!user) return user;
+
     let about = "";
     const { about: about_ } = user;
     if (about_) about = this.turndownService.turndown(about_);
