@@ -5,6 +5,7 @@ import {
 } from "apollo-datasource-rest";
 import { cond, equals, always } from "ramda";
 import * as turndown from "turndown";
+import { REQUEST_CACHE_TTL } from "../config/from-env";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
 export type StoriesType = "top" | "new" | "best" | "ask" | "show" | "job";
