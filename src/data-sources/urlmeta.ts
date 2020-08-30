@@ -1,4 +1,5 @@
 import { RESTDataSource, RequestOptions } from "apollo-datasource-rest";
+import { REQUEST_CACHE_TTL } from "../config/from-env";
 
 export type URLMeta = {
   site: {
@@ -23,10 +24,6 @@ export type URLMeta = {
   category?: string;
 };
 
-const REQUEST_CACHE_TTL: number = parseInt(
-  process.env.REQUEST_CACHE_TTL ?? (5 * 60).toString()
-);
-
 export class URLMetaAPI extends RESTDataSource {
   baseURL = process.env.URLMETA_API_BASE_URL;
   emailAddress = process.env.URLMETA_EMAIL_ADDRESS;
@@ -38,7 +35,6 @@ export class URLMetaAPI extends RESTDataSource {
     ).toString("base64");
 
     request.headers.set("Authorization", `Basic ${basicAuthBase64}`);
-    request.cache = "force-cache";
     request.cacheOptions = {
       ttl: REQUEST_CACHE_TTL,
     };

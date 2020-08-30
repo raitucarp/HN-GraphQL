@@ -4,7 +4,8 @@ import {
   HTTPCache,
 } from "apollo-datasource-rest";
 import { cond, equals, always } from "ramda";
-import * as turndown from "turndown";
+import turndown from "turndown";
+import { REQUEST_CACHE_TTL } from "../config/from-env";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
 export type StoriesType = "top" | "new" | "best" | "ask" | "show" | "job";
@@ -37,10 +38,6 @@ export type User = {
   avatarUrl?: string;
 };
 
-const REQUEST_CACHE_TTL: number = parseInt(
-  process.env.REQUEST_CACHE_TTL ?? (5 * 60).toString()
-);
-
 if (!process.env.HACKERNEWS_API_BASE_URL) {
   throw new Error("No HN API defined");
 }
@@ -49,10 +46,6 @@ export class HackerNewsAPI extends RESTDataSource {
   baseURL = process.env.HACKERNEWS_API_BASE_URL;
   httpCache = new HTTPCache();
   turndownService = new turndown();
-
-  constructor() {
-    super();
-  }
 
   willSendRequest(request: RequestOptions) {
     request.cacheOptions = {
@@ -70,6 +63,8 @@ export class HackerNewsAPI extends RESTDataSource {
 
   async getUser(username: string): Promise<User> {
     const user = await this.get<User>(`user/${username}.json`);
+    if (!user) return user;
+
     let about = "";
     const { about: about_ } = user;
     if (about_) about = this.turndownService.turndown(about_);
