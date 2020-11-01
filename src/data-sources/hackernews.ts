@@ -4,8 +4,9 @@ import {
   HTTPCache,
 } from "apollo-datasource-rest";
 import { cond, equals, always } from "ramda";
-import turndown from "turndown";
 import { REQUEST_CACHE_TTL } from "../config/from-env";
+import https from "https";
+import turndown from "turndown";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
 export type StoriesType = "top" | "new" | "best" | "ask" | "show" | "job";
@@ -139,5 +140,62 @@ export class HackerNewsAPI extends RESTDataSource {
 
     const storyIds = await storyFetcher();
     return this.getItemByIds(storyIds, offset, limit);
+  }
+
+  static subscribeUpdates(
+    onUpdate: (
+      data: { items: Item[]; profiles: User[] } | null,
+      error?: Error
+    ) => void
+  ) {
+    const updatesURL = `${process.env.HACKERNEWS_API_BASE_URL}updates.json`;
+    const headers = {
+      Accept: "text/event-stream",
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache",
+    };
+
+    const reqOptions = {
+      headers,
+    };
+
+    const HNAPI = new HackerNewsAPI();
+
+    const req = https.request(updatesURL, reqOptions, (res) => {
+      res.setEncoding("utf8");
+      res.on("data", async (chunk) => {
+        try {
+          const chunkString = chunk.toString();
+          const splittedChunk = chunkString.split("\n");
+          const data = splittedChunk[1];
+          const splittedData = data.split("data: ");
+          const JsonString = splittedData[1];
+          const eventData = JSON.parse(JsonString);
+          if (eventData === null) return onUpdate(null, new Error("No data"));
+          const { items: _items, profiles: _profiles } = eventData.data as {
+            items: number[];
+            profiles: string[];
+          };
+
+          const [items, users] = await Promise.all([
+            HNAPI.getItemByIds(_items, 0, 50),
+            HNAPI.getUsers(_profiles),
+          ]);
+          onUpdate({ items, profiles: users });
+        } catch (err) {
+          throw new Error(err);
+        }
+      });
+
+      res.on("end", () => {
+        console.log("No more data in response.");
+      });
+    });
+
+    req.on("error", (e) => {
+      console.error(`Got error: ${e.message}`);
+    });
+
+    req.end();
   }
 }
