@@ -1,15 +1,16 @@
 import "apollo-cache-control";
+import { commentRepliesResolver, commentReplyOfResolver } from "./comment";
+import { commentsResolver, itemResolver, urlMetaResolver } from "./item";
+import { Item } from "../data-sources/hackernews";
 import { PubSub } from "apollo-server";
 import { storyResolver } from "./stories";
-import { commentsResolver, itemResolver, urlMetaResolver } from "./item";
+import { updatesResolver } from "./updates";
 import { userStoriesResolver, userResolver, userInfoResolver } from "./user";
-import { Item, HackerNewsAPI } from "../data-sources/hackernews";
-import { commentRepliesResolver, commentReplyOfResolver } from "./comment";
 
-const ITEMS_UPDATED = "ITEMS_UPDATED";
-const PROFILES_UPDATED = "PROFILES_UPDATED";
+export const ITEMS_UPDATED = "ITEMS_UPDATED";
+export const PROFILES_UPDATED = "PROFILES_UPDATED";
 
-const pubsub = new PubSub();
+export const pubsub = new PubSub();
 const resolvers = {
   Item: {
     __resolveType() {
@@ -47,38 +48,19 @@ const resolvers = {
     ask_stories: storyResolver("ask"),
     show_stories: storyResolver("show"),
     job_stories: storyResolver("job"),
+    updates: updatesResolver,
     user: userResolver,
     item: itemResolver,
   },
 
   Subscription: {
-    itemsUpdated: {
+    items: {
       subscribe: () => pubsub.asyncIterator([ITEMS_UPDATED]),
     },
-    profilesUpdated: {
+    profiles: {
       subscribe: () => pubsub.asyncIterator([PROFILES_UPDATED]),
     },
   },
 };
-
-const STORY_UPDATES_INTERVAL: number = parseInt(
-  process.env.STORY_UPDATES_INTERVAL ?? (15 * 1000).toString()
-);
-
-setInterval(async () => {
-  try {
-    const hackernewsAPI = new HackerNewsAPI();
-    const { items, profiles } = await hackernewsAPI.getUpdates();
-    const [updatedStories, updatedProfiles] = await Promise.all([
-      hackernewsAPI.getItemByIds(items, 0, 15),
-      hackernewsAPI.getUsers(profiles, 0, 10),
-    ]);
-
-    pubsub.publish(ITEMS_UPDATED, { itemsUpdated: updatedStories });
-    pubsub.publish(PROFILES_UPDATED, { profilesUpdated: updatedProfiles });
-  } catch (error) {
-    console.error(error);
-  }
-}, STORY_UPDATES_INTERVAL);
 
 export default resolvers;

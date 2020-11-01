@@ -1,25 +1,19 @@
 import { ApolloServer } from "apollo-server-express";
-import responseCachePlugin from "apollo-server-plugin-response-cache";
-import { HackerNewsAPI } from "./data-sources/hackernews";
 import { RedisCache } from "apollo-server-cache-redis";
-import resolvers from "./resolvers";
-import typeDefs from "./typedefs";
-import http from "http";
-import express from "express";
-import { URLMetaAPI } from "./data-sources/urlmeta";
 import { REQUEST_CACHE_TTL, REDIS_CONNECTION_STRING } from "./config/from-env";
+import express from "express";
+import http from "http";
+import responseCachePlugin from "apollo-server-plugin-response-cache";
+import schema from "./schema";
+import { dataSources } from "./data-sources";
+import { HackerNewsAPI } from "./data-sources/hackernews";
+import { ITEMS_UPDATED, PROFILES_UPDATED, pubsub } from "./resolvers";
 
 const app = express();
-const dataSources = () => ({
-  hackerNewsAPI: new HackerNewsAPI(),
-  urlMetaAPI: new URLMetaAPI(),
-});
-
 const redisCache = new RedisCache(REDIS_CONNECTION_STRING);
 
 export const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   tracing: true,
   cache: redisCache,
   cacheControl: {
@@ -61,3 +55,14 @@ app.use((_req, res, _next) => {
 
 export const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
+
+HackerNewsAPI.subscribeUpdates((data, error) => {
+  try {
+    if (error || !data) return;
+    const { items, profiles } = data;
+    pubsub.publish(ITEMS_UPDATED, { items });
+    pubsub.publish(PROFILES_UPDATED, { profiles });
+  } catch (error) {
+    throw new Error(error);
+  }
+});

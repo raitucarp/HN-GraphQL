@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 
+const PAUL_GRAHAM_USERNAME = "pg";
 const typeDefs = gql`
   enum ItemType {
     job
@@ -130,6 +131,11 @@ const typeDefs = gql`
     stories(offset: Int = 0, limit: Int = 5): [UserStory]
   }
 
+  type Updates {
+    items: [UserStory]
+    profiles: [User]
+  }
+
   type Query {
     top_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     new_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
@@ -137,13 +143,14 @@ const typeDefs = gql`
     ask_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     show_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     job_stories(offset: Int = 0, limit: Int = 5): [Job!]!
+    updates(offset: Int = 0, limit: Int = 5): Updates!
     item(itemId: Int!): Story
-    user(username: String! = "pg"): User
+    user(username: String! = ${PAUL_GRAHAM_USERNAME}): User
   }
 
   type Subscription {
-    itemsUpdated: [UserStory]
-    profilesUpdated: [User]
+    items: [UserStory]
+    profiles: [User]
   }
 `;
 
