@@ -55,3 +55,14 @@ app.use((_req, res, _next) => {
 
 export const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
+
+HackerNewsAPI.subscribeUpdates((data, error) => {
+  try {
+    if (error || !data) return;
+    const { items, profiles } = data;
+    pubsub.publish(ITEMS_UPDATED, { items });
+    pubsub.publish(PROFILES_UPDATED, { profiles });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
