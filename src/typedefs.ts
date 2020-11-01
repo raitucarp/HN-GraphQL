@@ -149,8 +149,8 @@ const typeDefs = gql`
   }
 
   type Subscription {
-    itemsUpdated: [UserStory]
-    profilesUpdated: [User]
+    items: [UserStory]
+    profiles: [User]
   }
 `;
 
