@@ -131,6 +131,11 @@ const typeDefs = gql`
     stories(offset: Int = 0, limit: Int = 5): [UserStory]
   }
 
+  type Updates {
+    items: [UserStory]
+    profiles: [User]
+  }
+
   type Query {
     top_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     new_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
@@ -138,6 +143,7 @@ const typeDefs = gql`
     ask_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     show_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     job_stories(offset: Int = 0, limit: Int = 5): [Job!]!
+    updates(offset: Int = 0, limit: Int = 5): Updates!
     item(itemId: Int!): Story
     user(username: String! = ${PAUL_GRAHAM_USERNAME}): User
   }
