@@ -1,5 +1,6 @@
 import { gql } from "apollo-server";
 
+const PAUL_GRAHAM_USERNAME = "pg";
 const typeDefs = gql`
   enum ItemType {
     job
@@ -138,7 +139,7 @@ const typeDefs = gql`
     show_stories(offset: Int = 0, limit: Int = 5): [UserStory!]!
     job_stories(offset: Int = 0, limit: Int = 5): [Job!]!
     item(itemId: Int!): Story
-    user(username: String! = "pg"): User
+    user(username: String! = ${PAUL_GRAHAM_USERNAME}): User
   }
 
   type Subscription {
