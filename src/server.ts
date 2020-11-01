@@ -8,6 +8,7 @@ import http from "http";
 import express from "express";
 import { URLMetaAPI } from "./data-sources/urlmeta";
 import { REQUEST_CACHE_TTL, REDIS_CONNECTION_STRING } from "./config/from-env";
+import schema from "./schema";
 
 const app = express();
 const dataSources = () => ({
@@ -18,7 +19,7 @@ const dataSources = () => ({
 const redisCache = new RedisCache(REDIS_CONNECTION_STRING);
 
 export const server = new ApolloServer({
-  typeDefs,
+  schema,
   resolvers,
   tracing: true,
   cache: redisCache,
