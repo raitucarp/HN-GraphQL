@@ -24,7 +24,7 @@ export const userStoriesResolver = async (
 };
 
 export const userResolver = async (
-  root: any,
+  _root: any,
   { username }: any,
   { dataSources }: any
 ): Promise<User> => {
