@@ -56,9 +56,8 @@ export class HackerNewsAPI extends RESTDataSource {
 
   async getItem(id: number): Promise<Item> {
     const item = await this.get<Item>(`item/${id}.json`);
-    let text = "";
-    const { text: text_ } = item;
-    if (text_) text = this.turndownService.turndown(text_);
+    const text =
+      item && item.text ? this.turndownService.turndown(item.text) : "";
     return { ...item, text };
   }
 
