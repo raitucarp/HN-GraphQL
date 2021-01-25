@@ -78,7 +78,7 @@ export class HackerNewsAPI extends RESTDataSource {
     limit: number = 10
   ): Promise<User[]> {
     const users = usernameList
-      .slice(offset, limit)
+      .slice(offset, offset + limit)
       .map((username) => this.getUser(username));
     return Promise.all(users);
   }
@@ -120,7 +120,9 @@ export class HackerNewsAPI extends RESTDataSource {
     offset: number,
     limit: number
   ): Promise<Item[]> {
-    const stories = ids.slice(offset, limit).map((id) => this.getItem(id));
+    const stories = ids
+      .slice(offset, offset + limit)
+      .map((id) => this.getItem(id));
     return Promise.all(stories);
   }
 
