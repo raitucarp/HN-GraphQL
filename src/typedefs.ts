@@ -86,6 +86,7 @@ const typeDefs = gql`
     kids: [Int]
     parent: Int
     text: String
+    score: Int
     user_info: User
     reply_of: UserStory
     replies(offset: Int = 0, limit: Int = 5): [Comment]
