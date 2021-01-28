@@ -7,6 +7,8 @@ import { cond, equals, always } from "ramda";
 import { REQUEST_CACHE_TTL } from "../config/from-env";
 import https from "https";
 import turndown from "turndown";
+// @ts-ignore
+import decode from "unescape";
 
 export type ItemType = "job" | "story" | "comment" | "poll" | "pollopt";
 export type StoriesType = "top" | "new" | "best" | "ask" | "show" | "job";
@@ -56,8 +58,10 @@ export class HackerNewsAPI extends RESTDataSource {
 
   async getItem(id: number): Promise<Item> {
     const item = await this.get<Item>(`item/${id}.json`);
-    const text =
-      item && item.text ? this.turndownService.turndown(item.text) : "";
+    if (!item) return item;
+    const text = item.text
+      ? this.turndownService.turndown(decode(item.text))
+      : "";
     return { ...item, text };
   }
 
@@ -65,9 +69,9 @@ export class HackerNewsAPI extends RESTDataSource {
     const user = await this.get<User>(`user/${username}.json`);
     if (!user) return user;
 
-    let about = "";
-    const { about: about_ } = user;
-    if (about_) about = this.turndownService.turndown(about_);
+    const about = user.about
+      ? this.turndownService.turndown(decode(user.about))
+      : "";
     return { ...user, about };
   }
 
@@ -140,7 +144,8 @@ export class HackerNewsAPI extends RESTDataSource {
     ])(type).bind(this);
 
     const storyIds = await storyFetcher();
-    return this.getItemByIds(storyIds, offset, limit);
+    const items = await this.getItemByIds(storyIds, offset, limit);
+    return items.filter((item) => item !== null);
   }
 
   static subscribeUpdates(
