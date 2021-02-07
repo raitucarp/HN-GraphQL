@@ -28,7 +28,8 @@ export const userResolver = async (
   { username }: any,
   { dataSources }: any
 ): Promise<User> => {
-  const userData = dataSources.hackerNewsAPI.getUser(username);
+  const userData = await dataSources.hackerNewsAPI.getUser(username);
+
   return {
     ...userData,
     avatarUrl: `${process.env.AVATAR_BASE_URL}${username}.png`,
